@@ -1,0 +1,188 @@
+<!doctype html>
+<html class="no-js" lang="">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  <title></title>
+  <meta name="description" content="">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <link rel="apple-touch-icon" href="apple-touch-icon.png">
+  <!-- Place favicon.ico in the root directory -->
+
+  <link href="css/bootstrap.css" rel="stylesheet" />
+  <link rel="stylesheet" type="text/css" href="css/stylesheet.css" />
+
+  <script src="https://genius.codes"></script>
+  <script src="js/vendor/modernizr-2.8.3.min.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+</head>
+<body>
+<style type="text/css">
+  body { background: #115E76 !important; } /* Adding !important forces the browser to overwrite the default style applied by Bootstrap */
+</style>
+<div class="container">
+  <!--[if lt IE 8]>
+  <p class="browserupgrade">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
+  <![endif]-->
+
+  <!-- Add your site or application content here -->
+  <div class="jumbotron">
+	<!-- Wordy Image at top of page -->
+    <h1><img src="Images/Wordy.png" alt="" style="width:275px;height:100px;"></h1>
+	
+	<!-- Text to be displayed on page -->
+    <p>This web application will finally allow you to<br>
+      find that song that has been stuck in your head all<br>
+      day and all you can remember is a few words from it</p>
+
+    <div class="form-group">
+      <h2>Lyrics:<br></h2>
+      <input class="form-control" type="text" name="Song Lyrics" id="lyrics" style="height:300px"><br>
+	  
+	  <!-- Creates submit button -->
+      <button class="btn btn-success" id="myBtn">Submit</button>
+
+      <!--<h2>Genre</h2>-->
+
+      <!-- Trigger/Open The Modal -->
+
+      <div id="resultsModal" class="modal">
+        <div class="modal-content">
+          <ol id="list">
+          </ol>
+		  <!-- Creates buttons for closing and searching on results modal -->
+          <button class="btn btn-success" id="closeResult">Close result model</button>
+          <button class="btn btn-success" id="youtubeSearch">Search YouTube</button>
+        </div>
+      </div>
+
+      <div id="testModal" class="modal">
+        <div class="modal-content">
+
+        </div>
+      </div>
+      <!-- The Modal -->
+      <div id="myModal" class="modal">
+        <!-- Modal content -->
+        <div class="modal-content">
+          <span class="close">x</span>
+
+          <!-- Populates Select Genre modal -->
+          <input type="radio" name="Genre" value="Rock"> Rock<br>
+          <input type="radio" name="Genre" value="Pop"> Pop<br>
+          <input type="radio" name="Genre" value="Rap"> Rap<br>
+          <input type="radio" name="Genre" value="Alternative Music"> Alternative Music<br>
+          <input type="radio" name="Genre" value="Blues"> Blues<br>
+          <input type="radio" name="Genre" value="Classical Music"> Classical Music <br>
+          <input type="radio" name="Genre" value="Country Music"> Country Music<br>
+          <input type="radio" name="Genre" value="Dance"> Dance<br>
+          <input type="radio" name="Genre" value="Indie"> Indie<br>
+          <input type="radio" name="Genre" value="Jazz"> Jazz<br>
+          <input type="radio" name="Genre" value="Rock"> Rock<br>
+          <input type="radio" name="Genre" value="Reggae"> Reggae<br>
+          <input type="radio" name="Genre" value="Pop"> Pop<br>
+          <input type="radio" name="Genre" value="Rap"> Rap<br>
+          <input type="radio" name="Genre" value="Grime"> Grime<br>
+          <input type="radio" name="Genre" value="Unknown"> Unknown<br>
+
+          <button class="btn btn-success" id="close">Submit</button>
+        </div>
+
+        <script>
+          var hits=[];
+          //show modal
+          $("#myBtn").click(function(){
+            $("#myModal").show();
+          })
+
+          //hide modal
+          $("#close").click(function()
+                  {
+                    $("#myModal").hide();
+//                                var url="https://api.genius.com/oauth/authorize";
+//                                    url+="?client_id=xdTzu1sO5ubbcCSmsXV4d2w2U38QN1RTcaV_xh9l0g_BWM5PD721glLwkd666Vql";
+//                                    url+="&redirect_uri=http://wordy1.azurewebsites.net/";
+//                                    url+="&scope=me";
+//                                    url+="&state=GOT_AUTHORISED";
+//                                    url+="&response_type=code";
+//
+//                                window.location.href=url;
+                    // var lyric = document.getElementById("lyrics").getAttribute();
+                    var url="https://api.genius.com/search?q=" + encodeURIComponent($('.form-control')[0].value);
+//                                var data={"headers":{"Authorization":"Bearer "+"G4QTp9T9ONwpnV5DJBLtUpId8XNbJUMdWc2jvFCR-qYMRdYeo_XXK7jTEnwO8i8n"}
+//                                        };
+                    $.ajax({
+                      "url": url,
+                      "headers": {"Authorization":"Bearer "+"G4QTp9T9ONwpnV5DJBLtUpId8XNbJUMdWc2jvFCR-qYMRdYeo_XXK7jTEnwO8i8n"},
+                      "success": function (reply) {
+                         hits = reply.response.hits;
+                        console.log(hits);
+						
+						var i;
+						
+						//loops through and adds hits to the list
+                        for(i = 0; i < hits.length; i++){
+                          console.log(hits[i].result.full_title);
+                        }
+
+						//displays the modal and appends the list
+                        $("#resultsModal").show();
+                        for(i = 0; i < hits.length; i++){
+                          $("#list").append("<li>"+hits[i].result.full_title+"</li>");
+
+                        }
+					
+                      }
+                    });
+					
+					//closes and clears the modal when the button is clicked
+                    $("#closeResult").click(function(){
+                              $("#list").empty();
+                              $("#resultsModal").hide();
+                            }
+                    )
+
+
+                  } //end of click handler
+          )
+
+		  //YouTube search button clicked
+          $("#youtubeSearch").click(function(){
+              var search = prompt("Which result number do you want to search YouTube for?");
+			  
+			  //input validation
+			  if(search < 0 || search > 10){
+					alert("Invalid index");
+			  } else {
+					//takes the index and searches youtube 
+					search--;
+					var result = hits[search].result.full_title;
+					window.open("https://www.youtube.com/results?search_query=" + result,"blank");
+			  }
+          })
+
+        </script>
+
+      </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-{{JQUERY_VERSION}}.min.js"></script>
+    <script>window.jQuery || document.write('<script src="js/vendor/jquery-{{JQUERY_VERSION}}.min.js"><\/script>')</script>
+    <script src="js/plugins.js"></script>
+    <script src="js/main.js"></script>
+
+    <!-- Google Analytics: change UA-XXXXX-X to be your site's ID. -->
+    <script>
+      (function(b,o,i,l,e,r){b.GoogleAnalyticsObject=l;b[l]||(b[l]=
+              function(){(b[l].q=b[l].q||[]).push(arguments)});b[l].l=+new Date;
+        e=o.createElement(i);r=o.getElementsByTagName(i)[0];
+        e.src='https://www.google-analytics.com/analytics.js';
+        r.parentNode.insertBefore(e,r)}(window,document,'script','ga'));
+      ga('create','UA-XXXXX-X','auto');ga('send','pageview');
+    </script>
+   </div>
+  </div>
+</body>
+
+</html>
